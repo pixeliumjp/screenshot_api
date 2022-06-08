@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+	<div id="app">
+		<div class="left">
+			<table>
+				<tbody>
+					<tr>
+						<th>
+							スクリーンショットしたいページのURL
+						</th>
+						<td>
+							<input v-model="url" placeholder="edit me">
+						</td>
+					</tr>
+					<tr>
+						<th>
+							横幅
+						</th>
+						<td>
+							<input v-model="width" placeholder="edit me">px
+						</td>
+					</tr>
+					<tr>
+						<th>
+							高さ
+						</th>
+						<td>
+							<input v-model="height" placeholder="edit me">px
+						</td>
+					</tr>
+					<tr>
+						<th>
+							待機時間
+							<span>スクリーンショットを撮る際に画像の読み込みが終わっていなかったりする場合に調整</span>
+						</th>
+						<td>
+							<input v-model="wait" placeholder="edit me">ms
+						</td>
+					</tr>
+					<tr>
+						<th>
+							スクリーンショットのモード
+						</th>
+						<td>
+							<select v-model="full">
+								<option>一部</option>
+								<option>全体</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>{{ image_src }}</p>
+			<button type="button" v-on:click="onGetImage">イメージ表示</button>
+		</div>
+
+		<div class="right">
+			<img :src="image_src">
+		</div>
+
+	</div>
+</body>
+
+<script>
+
+	const app = {
+		data() {
+			return {
+				url: '',
+				width: '',
+				height: '',
+				wait: '',
+				full: '',
+				image_src: ''
+			};
+		},
+		methods: {
+			onGetImage: function () {
+				let param = "";
+				if (this.url) {
+					param = "?url=";
+					param = param + this.url;
+				}
+				this.image_src = "http://127.0.0.1:3000/api/capture" + param;
+			}
+		}
+	}
+
+	Vue.createApp(app).mount('#app')
+</script>
+
+<style>
+	body {
+		padding: 0;
+		margin: 0;
+	}
+
+	#app {
+		display: flex;
+		width: 880px;
+		margin-left: auto;
+		margin-right: auto;
+		gap: 1rem;
+	}
+
+	.right img {
+		width: 100%;
+	}
+
+	.left,
+	.right {
+		flex: 1;
+		border: 1px solid #eee;
+	}
+
+	.left,
+	.right {
+		padding: 1rem;
+	}
+
+	table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	th,
+	td {
+		display: block;
+		padding-bottom: 0.5rem;
+	}
+
+	th span {
+		font-size: 0.7rem;
+		display: block;
+	}
+
+	th+td {
+		padding-top: 0;
+	}
+</style>
+
+</html>
