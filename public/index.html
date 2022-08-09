@@ -18,7 +18,7 @@
 							スクリーンショットしたいページのURL
 						</th>
 						<td>
-							<input v-model="url" placeholder="edit me">
+							<input v-model="url" placeholder="https://pixelium.jp/">
 						</td>
 					</tr>
 					<tr>
@@ -26,7 +26,7 @@
 							横幅
 						</th>
 						<td>
-							<input v-model="width" placeholder="edit me">px
+							<input v-model="width" placeholder="1200">px
 						</td>
 					</tr>
 					<tr>
@@ -34,7 +34,7 @@
 							高さ
 						</th>
 						<td>
-							<input v-model="height" placeholder="edit me">px
+							<input v-model="height" placeholder="900">px
 						</td>
 					</tr>
 					<tr>
@@ -43,7 +43,7 @@
 							<span>スクリーンショットを撮る際に画像の読み込みが終わっていなかったりする場合に調整</span>
 						</th>
 						<td>
-							<input v-model="wait" placeholder="edit me">ms
+							<input v-model="wait" placeholder="300">ms
 						</td>
 					</tr>
 					<tr>
@@ -52,8 +52,9 @@
 						</th>
 						<td>
 							<select v-model="full">
-								<option>一部</option>
-								<option>全体</option>
+								<option v-for="option in options" v-bind:value="option.value" v-bind:key="option.id">
+									{{ option.name }}
+								</option>
 							</select>
 						</td>
 					</tr>
@@ -80,7 +81,11 @@
 				height: '',
 				wait: '',
 				full: '',
-				image_src: ''
+				image_src: '',
+				options: [
+					{ id: 1, name: '一部',value:'false' },
+					{ id: 2, name: '全体',value:'true' }
+				]
 			};
 		},
 		methods: {
@@ -89,6 +94,22 @@
 				if (this.url) {
 					param = "?url=";
 					param = param + this.url;
+				}
+
+				if (this.width) {
+					param = param + "&width=" + this.width;
+				}
+
+				if (this.height) {
+					param = param + "&height=" + this.height;
+				}
+
+				if (this.wait) {
+					param = param + "&wait=" + this.wait;
+				}
+
+				if (this.full) {
+					param = param + "&full=" + this.full;
 				}
 				this.image_src = "http://127.0.0.1:3000/api/capture" + param;
 			}

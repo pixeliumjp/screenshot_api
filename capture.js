@@ -3,7 +3,7 @@ import imageminPngquant from 'imagemin-pngquant'
 import fs from 'fs'
 import puppeteer from 'puppeteer'
 
-export async function captureScreenshot(url = "https://www.google.com/", width = 1200, height = 900, wait = 100, full = false) {
+export async function captureScreenshot(url = "https://www.google.com/", width = 1200, height = 900, wait = 2000, full = false) {
 
 	if (!fs.existsSync("screenshot")) {
 		fs.mkdirSync("screenshot");
@@ -22,7 +22,7 @@ export async function captureScreenshot(url = "https://www.google.com/", width =
 }
 
 export async function getScreenshot(url, width, height, wait, full) {
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch({ headless: false });
 	const page = await browser.newPage();
 
 	const viewport_option = {
@@ -39,6 +39,18 @@ export async function getScreenshot(url, width, height, wait, full) {
 	await page.setViewport(viewport_option);
 	await page.goto(url);
 	await page.waitForTimeout(wait);
+
+	// 下に99999px移動する
+	await page.evaluate(() => {
+		scroll(0, 99999);
+	});
+
+	await page.waitForTimeout(wait);
+
+	await page.evaluate(() => {
+		scroll(0, 0);
+	});
+
 	await page.screenshot(option);
 	await browser.close();
 	return 'screenshot complete!';
