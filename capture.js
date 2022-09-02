@@ -31,19 +31,24 @@ export async function getScreenshot(url, width, height, wait, full) {
 		deviceScaleFactor: 2
 	}
 
-	const option = {
+	let option = {
 		path: 'screenshot/screenshot.png',
-		fullPage: full
+	}
+
+	if(full === true){
+		option.fullPage = full;
 	}
 
 	await page.setViewport(viewport_option);
 	await page.goto(url);
 	await page.waitForTimeout(wait);
 
-	// 下に99999px移動する
-	await page.evaluate(() => {
-		scroll(0, 99999);
-	});
+	if(full === true){
+		// 下に99999px移動する
+		await page.evaluate(() => {
+			scroll(0, 99999);
+		});
+	}
 
 	await page.waitForTimeout(wait);
 
