@@ -104,3 +104,4 @@ dist
 .tern-port
 screenshot/screenshot.png
 dest/screenshot.png
+.DS_Store
