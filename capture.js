@@ -1,12 +1,17 @@
-import imagemin from 'imagemin'
-import imageminPngquant from 'imagemin-pngquant'
-import fs from 'fs'
-import puppeteer from 'puppeteer'
+import imagemin from 'imagemin';
+import imageminPngquant from 'imagemin-pngquant';
+import fs from 'fs';
+import puppeteer from 'puppeteer';
 
-export async function captureScreenshot(url = "https://www.google.com/", width = 1200, height = 900, wait = 2000, full = false) {
-
-	if (!fs.existsSync("screenshot")) {
-		fs.mkdirSync("screenshot");
+export async function captureScreenshot(
+	url = 'https://www.google.com/',
+	width = 1200,
+	height = 900,
+	wait = 2000,
+	full = false
+) {
+	if (!fs.existsSync('screenshot')) {
+		fs.mkdirSync('screenshot');
 	}
 
 	let result;
@@ -22,35 +27,37 @@ export async function captureScreenshot(url = "https://www.google.com/", width =
 }
 
 export async function getScreenshot(url, width, height, wait, full) {
-	const browser = await puppeteer.launch({ headless: false });
+	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
 
 	const viewport_option = {
 		width: width,
 		height: height,
-		deviceScaleFactor: 2
-	}
+		deviceScaleFactor: 2,
+	};
 
 	let option = {
 		path: 'screenshot/screenshot.png',
-	}
+	};
 
-	if(full === true){
+	if (full === true) {
 		option.fullPage = full;
 	}
 
 	await page.setViewport(viewport_option);
 	await page.goto(url);
-	await page.waitForTimeout(wait);
+	// await page.waitForTimeout(1000);
+	await page.waitForNetworkIdle();
 
-	if(full === true){
+	if (full === true) {
 		// 下に99999px移動する
 		await page.evaluate(() => {
 			scroll(0, 99999);
 		});
 	}
 
-	await page.waitForTimeout(wait);
+	// await page.waitForTimeout(1000);
+	await page.waitForNetworkIdle();
 
 	await page.evaluate(() => {
 		scroll(0, 0);
@@ -64,9 +71,7 @@ export async function getScreenshot(url, width, height, wait, full) {
 export async function imageOptimization() {
 	await imagemin(['screenshot/*.png'], {
 		destination: 'dest',
-		plugins: [
-			imageminPngquant({ quality: [0.65, 0.8] })
-		]
+		plugins: [imageminPngquant({ quality: [0.65, 0.8] })],
 	});
 	return 'optimize complete!';
 }

@@ -1,176 +1,176 @@
 <!DOCTYPE html>
 <html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="https://unpkg.com/vue"></script>
+	</head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<script src="https://unpkg.com/vue@next"></script>
-</head>
+	<body>
+		<div id="app">
+			<div class="left">
+				<table>
+					<tbody>
+						<tr>
+							<th>スクリーンショットしたいページのURL</th>
+							<td>
+								<input
+									v-model="url"
+									placeholder="https://pixelium.jp/"
+								/>
+							</td>
+						</tr>
+						<tr>
+							<th>横幅</th>
+							<td>
+								<input v-model="width" placeholder="1200" />px
+							</td>
+						</tr>
+						<tr>
+							<th>高さ</th>
+							<td>
+								<input v-model="height" placeholder="900" />px
+							</td>
+						</tr>
+						<tr>
+							<th>
+								待機時間
+								<span
+									>スクリーンショットを撮る際に画像の読み込みが終わっていなかったりする場合に調整</span
+								>
+							</th>
+							<td>
+								<input v-model="wait" placeholder="300" />ms
+							</td>
+						</tr>
+						<tr>
+							<th>スクリーンショットのモード</th>
+							<td>
+								<select v-model="full">
+									<option
+										v-for="option in options"
+										v-bind:value="option.value"
+										v-bind:key="option.id"
+									>
+										{{ option.name }}
+									</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<p>{{ image_src }}</p>
+				<button type="button" v-on:click="onGetImage">
+					イメージ表示
+				</button>
+			</div>
 
-<body>
-	<div id="app">
-		<div class="left">
-			<table>
-				<tbody>
-					<tr>
-						<th>
-							スクリーンショットしたいページのURL
-						</th>
-						<td>
-							<input v-model="url" placeholder="https://pixelium.jp/">
-						</td>
-					</tr>
-					<tr>
-						<th>
-							横幅
-						</th>
-						<td>
-							<input v-model="width" placeholder="1200">px
-						</td>
-					</tr>
-					<tr>
-						<th>
-							高さ
-						</th>
-						<td>
-							<input v-model="height" placeholder="900">px
-						</td>
-					</tr>
-					<tr>
-						<th>
-							待機時間
-							<span>スクリーンショットを撮る際に画像の読み込みが終わっていなかったりする場合に調整</span>
-						</th>
-						<td>
-							<input v-model="wait" placeholder="300">ms
-						</td>
-					</tr>
-					<tr>
-						<th>
-							スクリーンショットのモード
-						</th>
-						<td>
-							<select v-model="full">
-								<option v-for="option in options" v-bind:value="option.value" v-bind:key="option.id">
-									{{ option.name }}
-								</option>
-							</select>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>{{ image_src }}</p>
-			<button type="button" v-on:click="onGetImage">イメージ表示</button>
+			<div class="right">
+				<img :src="image_src" />
+			</div>
 		</div>
+	</body>
 
-		<div class="right">
-			<img :src="image_src">
-		</div>
+	<script>
+		const app = {
+			data() {
+				return {
+					url: '',
+					width: '',
+					height: '',
+					wait: '',
+					full: '',
+					image_src: '',
+					options: [
+						{ id: 1, name: '一部', value: 'false' },
+						{ id: 2, name: '全体', value: 'true' },
+					],
+				};
+			},
+			methods: {
+				onGetImage: function () {
+					let param = '';
+					if (this.url) {
+						param = '?url=';
+						param = param + this.url;
+					}
 
-	</div>
-</body>
+					if (this.width) {
+						param = param + '&width=' + this.width;
+					}
 
-<script>
+					if (this.height) {
+						param = param + '&height=' + this.height;
+					}
 
-	const app = {
-		data() {
-			return {
-				url: '',
-				width: '',
-				height: '',
-				wait: '',
-				full: '',
-				image_src: '',
-				options: [
-					{ id: 1, name: '一部',value:'false' },
-					{ id: 2, name: '全体',value:'true' }
-				]
-			};
-		},
-		methods: {
-			onGetImage: function () {
-				let param = "";
-				if (this.url) {
-					param = "?url=";
-					param = param + this.url;
-				}
+					if (this.wait) {
+						param = param + '&wait=' + this.wait;
+					}
 
-				if (this.width) {
-					param = param + "&width=" + this.width;
-				}
+					if (this.full) {
+						param = param + '&full=' + this.full;
+					}
+					this.image_src =
+						'http://127.0.0.1:3000/api/capture' + param;
+				},
+			},
+		};
 
-				if (this.height) {
-					param = param + "&height=" + this.height;
-				}
+		Vue.createApp(app).mount('#app');
+	</script>
 
-				if (this.wait) {
-					param = param + "&wait=" + this.wait;
-				}
-
-				if (this.full) {
-					param = param + "&full=" + this.full;
-				}
-				this.image_src = "http://127.0.0.1:3000/api/capture" + param;
-			}
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
 		}
-	}
 
-	Vue.createApp(app).mount('#app')
-</script>
+		#app {
+			display: flex;
+			width: 880px;
+			margin-left: auto;
+			margin-right: auto;
+			gap: 1rem;
+		}
 
-<style>
-	body {
-		padding: 0;
-		margin: 0;
-	}
+		.right img {
+			width: 100%;
+		}
 
-	#app {
-		display: flex;
-		width: 880px;
-		margin-left: auto;
-		margin-right: auto;
-		gap: 1rem;
-	}
+		.left,
+		.right {
+			flex: 1;
+			border: 1px solid #eee;
+		}
 
-	.right img {
-		width: 100%;
-	}
+		.left,
+		.right {
+			padding: 1rem;
+		}
 
-	.left,
-	.right {
-		flex: 1;
-		border: 1px solid #eee;
-	}
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
 
-	.left,
-	.right {
-		padding: 1rem;
-	}
+		th {
+			text-align: left;
+		}
 
-	table {
-		border-collapse: collapse;
-		width: 100%;
-	}
+		th,
+		td {
+			display: block;
+			padding-bottom: 0.5rem;
+		}
 
-	th {
-		text-align: left;
-	}
+		th span {
+			font-size: 0.7rem;
+			display: block;
+		}
 
-	th,
-	td {
-		display: block;
-		padding-bottom: 0.5rem;
-	}
-
-	th span {
-		font-size: 0.7rem;
-		display: block;
-	}
-
-	th+td {
-		padding-top: 0;
-	}
-</style>
-
+		th + td {
+			padding-top: 0;
+		}
+	</style>
 </html>
